@@ -8,13 +8,7 @@ import * as _ from 'lodash';
 import NavBar from './components/NavBar';
 import WeatherCard from './components/WeatherCard';
 
-const locations = [
-  'Tokyo',
-  'Helsinki',
-  'NY',
-  'Amsterdam',
-  'Dubai'
-];
+import * as locations from './locations';
 
 class App extends Component {
   render() {
@@ -36,11 +30,13 @@ class App extends Component {
 }
 
 function createCards() {
-  return _.times(Math.ceil(locations.length / 2), () => {
+  let locationKeys = Object.keys(locations)
+  return _.times(Math.ceil(locationKeys.length / 2), () => {
     return (
       <Row>
         {_.times(2, () => {
-          return !locations.length ? '' : (<WeatherCard location={locations.shift()} />)
+          let location = locationKeys.shift();
+          return !locationKeys.length ? '' : (<WeatherCard locationId={locations[location]} location={location} />)
         })}
       </Row>
     );
