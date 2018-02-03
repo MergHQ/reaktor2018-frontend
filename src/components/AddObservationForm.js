@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
-import * as axios from 'axios';
+import { addObservation } from '../util/Api';
 
 export default class AddObservationForm extends React.Component {
   render() {
@@ -25,14 +25,11 @@ export default class AddObservationForm extends React.Component {
 
   submit(e) {
     e.preventDefault();
-    axios.put('http://localhost:3000/observations/', {
-      location: this.props.locationId,
-      temperature: parseFloat(this.state.inputTemp)
-    }).then(result => {
-      console.log(e);
-      if (result.data.ok) {
-        this.props.reloadObservationList(result.data.payload);
-      }
-    })
+    addObservation(parseFloat(this.state.inputTemp), this.props.locationId)
+      .then(result => {
+        if (result.data.ok) {
+          this.props.reloadObservationList(result.data.payload);
+        }
+      });
   }
 }

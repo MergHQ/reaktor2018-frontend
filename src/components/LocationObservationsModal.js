@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table } from 'reactstrap';
 
 import AddObservationForm from './AddObservationForm';
-import Axios from 'axios';
+import { getLocationObservations } from '../util/Api';
 
 export default class LocationObservationsModal extends React.Component {
   constructor(props) {
@@ -57,18 +57,19 @@ export default class LocationObservationsModal extends React.Component {
 
   loadObservations() {
     let observations = [];
-    return Axios.get('http://localhost:3000/observations/' + this.props.location).then(result => {
-      if (result.data.ok) {
-        let count = 0;
-        observations = result.data.payload.map(observation => {
-          count++;
-          return entryToTableRow(observation, count);
-        });
-        this.setState({
-          observations
-        });
-      }
-    });
+    return getLocationObservations(this.props.location)
+      .then(result => {
+        if (result.data.ok) {
+          let count = 0;
+          observations = result.data.payload.map(observation => {
+            count++;
+            return entryToTableRow(observation, count);
+          });
+          this.setState({
+            observations
+          });
+        }
+      });
   }
 
   async reloadObservationList(entry) {
@@ -78,15 +79,15 @@ export default class LocationObservationsModal extends React.Component {
 }
 
 function entryToTableRow(entry, count) {
-    if (!entry) {
-      return '';
-    }
-    let date = new Date(entry.createdAt);
-    return (
-      <tr>
-        <th scope="row">{count}</th>
-        <td>{entry.temperature}</td>
-        <td>{date.toLocaleString()}</td>
-      </tr>
+  if (!entry) {
+    return '';
+  }
+  let date = new Date(entry.createdAt);
+  return (
+    <tr>
+      <th scope="row">{count}</th>
+      <td>{entry.temperature}</td>
+      <td>{date.toLocaleString()}</td>
+    </tr>
   )
 }
