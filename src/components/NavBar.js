@@ -13,6 +13,8 @@ import {
   DropdownItem
 } from 'reactstrap';
 
+import AboutModal from './AboutModal';
+
 export default class NavBar extends React.Component {
   constructor(props) {
     super(props);
@@ -36,7 +38,7 @@ export default class NavBar extends React.Component {
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
               <NavItem>
-                <NavLink href="#" onClick={e => this.props.aboutClicked(e)}>about</NavLink>
+                <AboutModal />
               </NavItem>
             </Nav>
           </Collapse>
@@ -45,3 +47,4 @@ export default class NavBar extends React.Component {
     );
   }
 }
+

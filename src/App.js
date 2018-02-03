@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 import { Container, Row, Col } from 'reactstrap';
@@ -30,13 +29,14 @@ class App extends Component {
 }
 
 function createCards() {
-  let locationKeys = Object.keys(locations)
+  let locationKeys = Object.keys(locations);
   return _.times(Math.ceil(locationKeys.length / 2), () => {
     return (
       <Row>
         {_.times(2, () => {
           let location = locationKeys.shift();
-          return !locationKeys.length ? '' : (<WeatherCard locationId={locations[location]} location={location} />)
+          if (location)
+            return (<WeatherCard locationId={locations[location]} location={location} />)
         })}
       </Row>
     );

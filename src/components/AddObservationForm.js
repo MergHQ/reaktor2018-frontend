@@ -8,8 +8,8 @@ export default class AddObservationForm extends React.Component {
     return (
       <Form inline onSubmit={e => this.submit(e)}>
         <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-          <Label for="exampleEmail" className="mr-sm-2">Temperature</Label>
-          <Input type="text" name="email" id="exampleEmail" onChange={e => this.tempChanged(e)} placeholder="12.3" />
+          <Label for="exampleEmail" className="mr-sm-2">New Observation</Label>
+          <Input type="text" id="exampleEmail" onChange={e => this.tempChanged(e)} placeholder="Temperature" />
         </FormGroup>
         <Button>Submit</Button>
       </Form>
@@ -31,7 +31,7 @@ export default class AddObservationForm extends React.Component {
     }).then(result => {
       console.log(e);
       if (result.data.ok) {
-        this.props.addNewEntry(result.data.payload);
+        this.props.reloadObservationList(result.data.payload);
       }
     })
   }

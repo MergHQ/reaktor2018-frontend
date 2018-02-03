@@ -4,8 +4,6 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table } from 'react
 import AddObservationForm from './AddObservationForm';
 import Axios from 'axios';
 
-let self;
-
 export default class LocationObservationsModal extends React.Component {
   constructor(props) {
     super(props);
@@ -14,7 +12,6 @@ export default class LocationObservationsModal extends React.Component {
     };
 
     this.toggle = this.toggle.bind(this);
-    self = this;
   }
 
   toggle() {
@@ -31,6 +28,8 @@ export default class LocationObservationsModal extends React.Component {
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
           <ModalHeader toggle={this.toggle}>{this.props.location}</ModalHeader>
           <ModalBody>
+            <AddObservationForm location={this.props.location} locationId={this.props.locationId} reloadObservationList={entry => this.reloadObservationList(entry)} />
+            <br />
             <Table striped>
               <thead>
                 <tr>
@@ -43,7 +42,6 @@ export default class LocationObservationsModal extends React.Component {
                 {(this.state && this.state.observations) ? this.state.observations : ''}
               </tbody>
             </Table>
-          <AddObservationForm location={this.props.location} locationId={this.props.locationId} addNewEntry={entry => this.addNewEntry(entry)} />
           </ModalBody>
           <ModalFooter>
             <Button color="secondary" onClick={this.toggle}>Close</Button>
@@ -54,8 +52,12 @@ export default class LocationObservationsModal extends React.Component {
   }
 
   componentDidMount() {
+    this.loadObservations();
+  }
+
+  loadObservations() {
     let observations = [];
-    Axios.get('http://localhost:3000/observations/' + this.props.location).then(result => {
+    return Axios.get('http://localhost:3000/observations/' + this.props.location).then(result => {
       if (result.data.ok) {
         let count = 0;
         observations = result.data.payload.map(observation => {
@@ -69,12 +71,9 @@ export default class LocationObservationsModal extends React.Component {
     });
   }
 
-  addNewEntry(entry) {
-    let observations = this.state.observations;
-    observations.unshift(entryToTableRow(entry, observations.length + 1));
-    this.setState({
-      observations
-    });
+  async reloadObservationList(entry) {
+    await this.loadObservations();
+    this.props.loadCardStats();
   }
 }
 
