@@ -2,6 +2,9 @@ import React from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table } from 'reactstrap';
 
 import AddObservationForm from './AddObservationForm';
+import Axios from 'axios';
+
+let self;
 
 export default class LocationObservationsModal extends React.Component {
   constructor(props) {
@@ -11,6 +14,7 @@ export default class LocationObservationsModal extends React.Component {
     };
 
     this.toggle = this.toggle.bind(this);
+    self = this;
   }
 
   toggle() {
@@ -36,10 +40,10 @@ export default class LocationObservationsModal extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                {this.createTables()}
+                {(this.state && this.state.observations) ? this.state.observations : ''}
               </tbody>
             </Table>
-          <AddObservationForm location={this.props.location} locationId={this.props.locationId} addNewEntry={this.addNewEntry} />
+          <AddObservationForm location={this.props.location} locationId={this.props.locationId} addNewEntry={entry => this.addNewEntry(entry)} />
           </ModalBody>
           <ModalFooter>
             <Button color="secondary" onClick={this.toggle}>Close</Button>
@@ -49,19 +53,28 @@ export default class LocationObservationsModal extends React.Component {
     );
   }
 
-  createTables() {
-    let count = 0;
-    let entries = this.observations.map(item => {
-      let date = new Date(item.createdAt);
-      count++;
-      return entryToTableRow(item, count);
+  componentDidMount() {
+    let observations = [];
+    Axios.get('http://localhost:3000/observations/' + this.props.location).then(result => {
+      if (result.data.ok) {
+        let count = 0;
+        observations = result.data.payload.map(observation => {
+          count++;
+          return entryToTableRow(observation, count);
+        });
+        this.setState({
+          observations
+        });
+      }
     });
-    return entries;
   }
 
   addNewEntry(entry) {
-    this.observations.push(entryToTableRow(entry, this.state.entries.length + 1));
-    this.setState();
+    let observations = this.state.observations;
+    observations.unshift(entryToTableRow(entry, observations.length + 1));
+    this.setState({
+      observations
+    });
   }
 }
 

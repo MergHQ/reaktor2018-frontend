@@ -29,6 +29,7 @@ export default class AddObservationForm extends React.Component {
       location: this.props.locationId,
       temperature: parseFloat(this.state.inputTemp)
     }).then(result => {
+      console.log(e);
       if (result.data.ok) {
         this.props.addNewEntry(result.data.payload);
       }
